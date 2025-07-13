@@ -23,6 +23,13 @@ fun main(args: Array<String>) {
         logger.info("Using model: $model, size: $size")
         
         val imageGenerator = ImageGenerator(`api-key`)
+        
+        // Validate API key first
+        if (!imageGenerator.validateApiKey()) {
+            logger.error("API key validation failed. Please check your API key and try again.")
+            System.exit(1)
+        }
+        
         val success = imageGenerator.generateImage(prompt, size, `output-path`, model)
         
         if (success) {

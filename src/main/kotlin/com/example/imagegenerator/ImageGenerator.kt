@@ -21,6 +21,34 @@ class ImageGenerator(private val apiKey: String) {
     private val mapper = jacksonObjectMapper()
     private val baseUrl = "https://api.openai.com/v1"
     
+    fun validateApiKey(): Boolean {
+        return try {
+            logger.info("Validating API key...")
+            
+            val request = Request.Builder()
+                .url("$baseUrl/models")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
+            
+            val response = client.newCall(request).execute()
+            
+            if (response.isSuccessful) {
+                logger.info("✅ API key is valid and has proper permissions")
+                true
+            } else {
+                logger.error("❌ API key validation failed with code: ${response.code}")
+                val responseBody = response.body?.string()
+                logger.error("Response: $responseBody")
+                false
+            }
+            
+        } catch (e: Exception) {
+            logger.error("❌ Error validating API key: ${e.message}")
+            false
+        }
+    }
+    
     fun generateImage(prompt: String, size: String, outputPath: String, model: String): Boolean {
         return try {
             logger.info("Sending request to OpenAI API...")
@@ -46,7 +74,40 @@ class ImageGenerator(private val apiKey: String) {
             
             if (!response.isSuccessful) {
                 logger.error("API request failed with code: ${response.code}")
-                logger.error("Response body: ${response.body?.string()}")
+                logger.error("Response headers: ${response.headers}")
+                val responseBody = response.body?.string()
+                logger.error("Response body: $responseBody")
+                
+                // Provide specific guidance for common errors
+                when (response.code) {
+                    400 -> {
+                        if (responseBody?.contains("billing_hard_limit_reached") == true) {
+                            logger.error("BILLING ISSUE DETECTED:")
+                            logger.error("Your OpenAI account has reached its billing limit.")
+                            logger.error("Solutions:")
+                            logger.error("1. Check your billing at: https://platform.openai.com/account/billing")
+                            logger.error("2. Add payment method if needed")
+                            logger.error("3. Increase spending limits")
+                            logger.error("4. Try using a different API key")
+                        } else if (responseBody?.contains("invalid_api_key") == true) {
+                            logger.error("INVALID API KEY:")
+                            logger.error("The provided API key is not valid.")
+                            logger.error("Please check your API key at: https://platform.openai.com/api-keys")
+                        }
+                    }
+                    401 -> {
+                        logger.error("AUTHENTICATION ERROR:")
+                        logger.error("Invalid API key or authentication failed.")
+                        logger.error("Please verify your API key is correct.")
+                    }
+                    429 -> {
+                        logger.error("RATE LIMIT EXCEEDED:")
+                        logger.error("Too many requests. Please wait and try again.")
+                    }
+                    else -> {
+                        logger.error("UNKNOWN ERROR: HTTP ${response.code}")
+                    }
+                }
                 return false
             }
             
