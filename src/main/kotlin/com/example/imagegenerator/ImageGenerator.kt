@@ -132,6 +132,95 @@ class ImageGenerator(private val apiKey: String) {
         }
     }
     
+    fun analyzeApiKey(): Map<String, Any> {
+        val analysis = mutableMapOf<String, Any>()
+        
+        try {
+            logger.info("🔍 Analyzing API key...")
+            
+            // Check key format
+            analysis["key_format"] = when {
+                apiKey.startsWith("sk-") -> "Personal API Key"
+                apiKey.startsWith("sk-proj-") -> "Project API Key"
+                apiKey.startsWith("sk-svcacct-") -> "Service Account API Key"
+                apiKey.startsWith("sk-org-") -> "Organization API Key"
+                else -> "Unknown Format"
+            }
+            
+            // Get organization info
+            val orgRequest = Request.Builder()
+                .url("$baseUrl/organizations")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
+            
+            val orgResponse = client.newCall(orgRequest).execute()
+            if (orgResponse.isSuccessful) {
+                val orgBody = orgResponse.body?.string()
+                analysis["organization_info"] = orgBody ?: "No organization info"
+                logger.info("📋 Organization info retrieved")
+            } else {
+                analysis["organization_info"] = "Failed to get organization info: ${orgResponse.code}"
+            }
+            
+            // Get models info
+            val modelsRequest = Request.Builder()
+                .url("$baseUrl/models")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
+            
+            val modelsResponse = client.newCall(modelsRequest).execute()
+            if (modelsResponse.isSuccessful) {
+                val modelsBody = modelsResponse.body?.string()
+                analysis["models_info"] = modelsBody ?: "No models info"
+                logger.info("🤖 Models info retrieved")
+            } else {
+                analysis["models_info"] = "Failed to get models info: ${modelsResponse.code}"
+            }
+            
+            // Get billing info
+            val billingRequest = Request.Builder()
+                .url("$baseUrl/dashboard/billing/subscription")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
+            
+            val billingResponse = client.newCall(billingRequest).execute()
+            if (billingResponse.isSuccessful) {
+                val billingBody = billingResponse.body?.string()
+                analysis["billing_info"] = billingBody ?: "No billing info"
+                logger.info("💰 Billing info retrieved")
+            } else {
+                analysis["billing_info"] = "Failed to get billing info: ${billingResponse.code}"
+            }
+            
+            // Test image generation endpoint specifically
+            val testImageRequest = Request.Builder()
+                .url("$baseUrl/images/generations")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .addHeader("Content-Type", "application/json")
+                .post(RequestBody.create("application/json".toMediaType(), 
+                    """{"model":"dall-e-3","prompt":"test","n":1,"size":"256x256"}"""))
+                .build()
+            
+            val testImageResponse = client.newCall(testImageRequest).execute()
+            analysis["image_generation_test"] = mapOf(
+                "status_code" to testImageResponse.code,
+                "response_body" to (testImageResponse.body?.string() ?: "No response body"),
+                "headers" to testImageResponse.headers.toString()
+            )
+            
+            logger.info("✅ API key analysis completed")
+            
+        } catch (e: Exception) {
+            analysis["error"] = "Analysis failed: ${e.message}"
+            logger.error("❌ API key analysis failed: ${e.message}")
+        }
+        
+        return analysis
+    }
+    
     private fun downloadImage(imageUrl: String, outputPath: String): Boolean {
         return try {
             logger.info("Downloading image from: $imageUrl")

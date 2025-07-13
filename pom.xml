@@ -29,14 +29,14 @@
             <version>${kotlin.version}</version>
         </dependency>
 
-        <!-- HTTP Client -->
+        <!-- HTTP Client (used for both OpenAI and Stable Diffusion APIs) -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.12.0</version>
         </dependency>
 
-        <!-- JSON Processing -->
+        <!-- JSON Processing (used for both APIs) -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>

@@ -1,21 +1,26 @@
-# Generate Image OpenAI
+# Generate Image AI
 
-A Kotlin-based Maven project that generates images using OpenAI's DALL-E API based on text prompts.
+A Kotlin-based Maven project that generates images using multiple AI providers (OpenAI DALL-E and Stability AI Stable Diffusion) based on text prompts.
 
 ## Features
 
-- Generate images from text prompts using OpenAI's DALL-E models
-- Support for different image sizes (256x256, 512x512, 1024x1024)
+- Generate images from text prompts using multiple AI providers
+- **OpenAI DALL-E**: High-quality image generation with DALL-E 2 and DALL-E 3
+- **Stability AI Stable Diffusion**: Advanced image generation with various Stable Diffusion models
+- Support for different image sizes (256x256, 512x512, 1024x1024, 1024x768, 768x1024)
 - Command-line interface with flexible options
 - Automatic image download and saving
 - Comprehensive error handling and logging
 - API key validation and enhanced error messages
+- Provider-specific error handling and guidance
 
 ## Prerequisites
 
 - Java 17 or higher
 - Maven 3.6 or higher
-- OpenAI API key
+- API key from your chosen provider:
+  - **OpenAI API key** (for DALL-E models)
+  - **Stability AI API key** (for Stable Diffusion models)
 
 ## Setup
 
@@ -37,23 +42,36 @@ A Kotlin-based Maven project that generates images using OpenAI's DALL-E API bas
 
 ## Usage
 
-### Basic Usage
+### Basic Usage (Stable Diffusion - Default)
 
 ```bash
 java -jar target/generate-image-openai-1.0.0.jar \
   --prompt "A beautiful sunset over mountains" \
-  --api-key "your-openai-api-key-here"
+  --api-key "your-stability-ai-api-key-here"
 ```
 
-### Advanced Usage
+### OpenAI DALL-E Usage
 
 ```bash
 java -jar target/generate-image-openai-1.0.0.jar \
   --prompt "A futuristic city with flying cars" \
   --api-key "your-openai-api-key-here" \
+  --provider "openai" \
   --size "1024x1024" \
   --output-path "my_image.png" \
   --model "dall-e-3"
+```
+
+### Advanced Stable Diffusion Usage
+
+```bash
+java -jar target/generate-image-openai-1.0.0.jar \
+  --prompt "A majestic dragon flying over a medieval castle" \
+  --api-key "your-stability-ai-api-key-here" \
+  --provider "stable-diffusion" \
+  --size "1024x1024" \
+  --output-path "dragon_castle.png" \
+  --model "stable-diffusion-xl-1024-v1-0"
 ```
 
 ### Command Line Options
@@ -61,74 +79,113 @@ java -jar target/generate-image-openai-1.0.0.jar \
 | Option | Short | Description | Default | Required |
 |--------|-------|-------------|---------|----------|
 | `--prompt` | `-p` | Text prompt for image generation | - | Yes |
-| `--api-key` | `-k` | OpenAI API key | - | Yes |
-| `--size` | `-s` | Image size (256x256, 512x512, 1024x1024) | 1024x1024 | No |
+| `--api-key` | `-k` | API key for the selected provider | - | Yes |
+| `--provider` | `-r` | Image generation provider (openai, stable-diffusion) | stable-diffusion | No |
+| `--size` | `-s` | Image size (see supported sizes below) | 1024x1024 | No |
 | `--output-path` | `-o` | Output file path | generated_image.png | No |
-| `--model` | `-m` | OpenAI model to use | dall-e-3 | No |
+| `--model` | `-m` | Model to use (see supported models below) | auto-selected | No |
 
 ### Examples
 
-1. **Generate a simple image:**
+1. **Generate with Stable Diffusion (default):**
    ```bash
    java -jar target/generate-image-openai-1.0.0.jar \
      -p "A cute cat playing with yarn" \
-     -k "sk-your-api-key-here"
+     -k "your-stability-ai-api-key"
    ```
 
-2. **Generate a high-resolution image:**
-   ```bash
-   java -jar target/generate-image-openai-1.0.0.jar \
-     -p "A majestic dragon flying over a medieval castle" \
-     -k "sk-your-api-key-here" \
-     -s "1024x1024" \
-     -o "dragon_castle.png"
-   ```
-
-3. **Use DALL-E 2 model:**
+2. **Generate with OpenAI DALL-E:**
    ```bash
    java -jar target/generate-image-openai-1.0.0.jar \
      -p "An abstract painting with vibrant colors" \
-     -k "sk-your-api-key-here" \
-     -m "dall-e-2" \
-     -s "512x512"
+     -k "sk-your-openai-api-key" \
+     -r "openai" \
+     -m "dall-e-3"
+   ```
+
+3. **Use specific Stable Diffusion model:**
+   ```bash
+   java -jar target/generate-image-openai-1.0.0.jar \
+     -p "A cyberpunk cityscape at night" \
+     -k "your-stability-ai-api-key" \
+     -r "stable-diffusion" \
+     -m "stable-diffusion-xl-beta-v2-2-2" \
+     -s "1024x768"
    ```
 
 ## API Key Setup
 
+### Stability AI (Stable Diffusion) - Recommended
+1. Go to [Stability AI Platform](https://platform.stability.ai/)
+2. Create an account and get free credits
+3. Generate an API key at [API Keys](https://platform.stability.ai/account/keys)
+4. Use the key with the `--api-key` parameter
+
+### OpenAI (DALL-E)
 1. Go to [OpenAI API](https://platform.openai.com/api-keys)
 2. Create a new API key
-3. Use the key with the `--api-key` parameter
+3. Use the key with the `--api-key` parameter and `--provider openai`
 
-**Note:** Keep your API key secure and never commit it to version control.
+**Note:** Keep your API keys secure and never commit them to version control.
 
 ## Supported Models
 
+### Stability AI (Stable Diffusion) Models
+- `stable-diffusion-xl-1024-v1-0` (default) - Latest XL model, highest quality
+- `stable-diffusion-xl-beta-v2-2-2` - Beta XL model with enhanced features
+- `stable-diffusion-v1-6` - Standard Stable Diffusion v1.6
+- `deepfloyd-if-v1-0` - DeepFloyd IF model for high-quality images
+- `stable-diffusion-2-1` - Stable Diffusion 2.1
+- `stable-diffusion-2-1-base` - Base version of SD 2.1
+
+### OpenAI Models
 - `dall-e-3` (default) - Latest model with highest quality
 - `dall-e-2` - Previous generation model
 
 ## Supported Image Sizes
 
+### Stability AI (Stable Diffusion)
 - `256x256` - Small images, faster generation
 - `512x512` - Medium images, balanced quality/speed
 - `1024x1024` - Large images, highest quality (default)
+- `1024x768` - Landscape format
+- `768x1024` - Portrait format
+
+### OpenAI (DALL-E)
+- `256x256` - Small images (DALL-E 2 only)
+- `512x512` - Medium images (DALL-E 2 only)
+- `1024x1024` - Large images (default)
+- `1024x1792` - Portrait format (DALL-E 3 only)
+- `1792x1024` - Landscape format (DALL-E 3 only)
+
+## Provider Comparison
+
+| Feature | Stability AI | OpenAI |
+|---------|-------------|--------|
+| **Free Credits** | ✅ Yes (25 free credits) | ❌ No (requires billing setup) |
+| **Model Variety** | ✅ Multiple SD models | ✅ DALL-E 2 & 3 |
+| **Image Quality** | ✅ High quality | ✅ Very high quality |
+| **Speed** | ✅ Fast | ⚠️ Slower |
+| **Cost** | ✅ Lower cost | ⚠️ Higher cost |
+| **API Limits** | ✅ Generous | ⚠️ Strict |
 
 ## Error Handling
 
-The application includes comprehensive error handling for:
+The application includes comprehensive error handling for both providers:
 - Invalid API keys
 - Network connectivity issues
 - API rate limits
 - Invalid prompts
 - File system errors
-- Billing limit issues
+- Billing/credit limit issues
 
 ### Enhanced Error Messages
 
-The application now provides specific error messages and solutions for common issues:
-- **Billing Issues**: Clear guidance on resolving billing limits
-- **API Key Validation**: Pre-validation of API keys before image generation
-- **Network Errors**: Detailed network connectivity troubleshooting
-- **Rate Limits**: Information about API rate limiting
+The application provides specific error messages and solutions for common issues:
+- **Stability AI**: Credit balance checks and purchase guidance
+- **OpenAI**: Billing limit resolution and API key validation
+- **Network Errors**: Detailed connectivity troubleshooting
+- **Rate Limits**: Provider-specific rate limiting information
 
 ## Logging
 
@@ -189,13 +246,22 @@ This project is open source and available under the MIT License.
 1. **"API request failed"** - Check your API key and internet connection
 2. **"No image data received"** - The prompt might be inappropriate or the API might be rate-limited
 3. **"Failed to download image"** - Check file permissions and disk space
-4. **"Billing hard limit reached"** - Check your OpenAI billing settings and limits
+4. **"Insufficient credits"** (Stability AI) - Check your credit balance at platform.stability.ai
+5. **"Billing hard limit reached"** (OpenAI) - Check your OpenAI billing settings
 
 ### Getting Help
 
 If you encounter issues:
 1. Check the logs for detailed error messages
 2. Verify your API key is correct
-3. Ensure you have sufficient API credits
-4. Check OpenAI's service status
-5. Review the enhanced error messages for specific solutions 
+3. Ensure you have sufficient credits/API quota
+4. Check the provider's service status
+5. Review the enhanced error messages for specific solutions
+
+### Why Choose Stable Diffusion?
+
+- **Free Credits**: Get 25 free credits when you sign up
+- **Lower Costs**: Generally more affordable than OpenAI
+- **Model Variety**: Multiple models for different use cases
+- **No Billing Setup**: Start generating immediately
+- **Open Source**: Based on open-source technology 
