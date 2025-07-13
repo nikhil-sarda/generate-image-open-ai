@@ -58,8 +58,9 @@ class AimlApiGenerator(private val apiKey: String) {
         return try {
             logger.info("Sending request to AIML API...")
             
-            // Parse size to width and height
-            val (width, height) = parseSize(size)
+            // Get the supported size for this model
+            val supportedSize = getSupportedSizeForModel(model, size)
+            logger.info("Using size: $supportedSize for model: $model")
             
             // Update with actual AIML API request format
             val requestBody = AimlApiRequest(
@@ -70,8 +71,8 @@ class AimlApiGenerator(private val apiKey: String) {
                 n = 1,
                 outputCompression = 100,
                 outputFormat = "png",
-                quality = "medium",
-                size = size,
+                quality = "standard", // Changed from "medium" to "standard"
+                size = supportedSize,
                 responseFormat = "url"
             )
             
@@ -157,8 +158,38 @@ class AimlApiGenerator(private val apiKey: String) {
             "1024x768" -> Pair(1024, 768)
             "768x1024" -> Pair(768, 1024)
             else -> {
-                logger.warn("Unknown size format: $size, using default 256x256")
-                Pair(256, 256)
+                logger.warn("Unknown size format: $size, using default 1024x1024")
+                Pair(1024, 1024)
+            }
+        }
+    }
+    
+    private fun getSupportedSizeForModel(model: String, requestedSize: String): String {
+        return when {
+            model.startsWith("dall-e-") -> {
+                // DALL-E models support: 1024x1024, 1024x1792, 1792x1024
+                when (requestedSize) {
+                    "1024x1024", "1024x1792", "1792x1024" -> requestedSize
+                    else -> {
+                        logger.warn("Size $requestedSize not supported for $model, using 1024x1024")
+                        "1024x1024"
+                    }
+                }
+            }
+            model.startsWith("stable-diffusion-") -> {
+                // Stable Diffusion models support: 1024x1024, 1024x1536, 1536x1024
+                when (requestedSize) {
+                    "1024x1024", "1024x1536", "1536x1024" -> requestedSize
+                    else -> {
+                        logger.warn("Size $requestedSize not supported for $model, using 1024x1024")
+                        "1024x1024"
+                    }
+                }
+            }
+            else -> {
+                // For other models, try to use the requested size or default to 1024x1024
+                logger.warn("Unknown model $model, using requested size $requestedSize")
+                requestedSize
             }
         }
     }
@@ -196,11 +227,19 @@ class AimlApiGenerator(private val apiKey: String) {
     
     fun getAvailableModels(): List<String> {
         return listOf(
-            "openai/gpt-image-1", // DALL-E 3 equivalent
-            "openai/gpt-image-2", // DALL-E 2 equivalent
-            "stability-ai/stable-diffusion-xl-1024-v1-0",
-            "stability-ai/stable-diffusion-v1-6",
-            "midjourney/midjourney-v6"
+            "dall-e-3", // OpenAI DALL-E 3
+            "dall-e-2", // OpenAI DALL-E 2
+            "stable-diffusion-v3-medium",
+            "stable-diffusion-v35-large",
+            "flux-pro",
+            "flux-pro/v1.1",
+            "flux-pro/v1.1-ultra",
+            "flux-pro/v1.1-ultra-raw",
+            "flux-realism",
+            "recraft-v3",
+            "google/imagen4/preview",
+            "imagen-3.0-generate-002",
+            "bytedance/seedream-3.0"
         )
     }
 }

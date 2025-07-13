@@ -49,10 +49,10 @@ A Kotlin-based Maven project that generates images using multiple AI providers (
 ```bash
 java -jar target/generate-image-ai-1.0.0.jar \
   --prompt "A beautiful sunset over mountains" \
-  --api-key "your-aiml-api-key-here"
+  --api-key "5a93dc96346c4abfa3e2ea67d84c1a55"
 ```
 
-*Note: Default provider is now AIML API (`aiml-api`). Default size is 256x256 for maximum token efficiency*
+*Note: Default provider is now AIML API (`aiml-api`). Default size is 512x512 for balanced quality and efficiency*
 
 ### OpenAI DALL-E Usage
 
@@ -85,7 +85,7 @@ java -jar target/generate-image-ai-1.0.0.jar \
 | `--prompt` | `-p` | Text prompt for image generation | - | Yes |
 | `--api-key` | `-k` | API key for the selected provider | - | Yes |
 | `--provider` | `-r` | Image generation provider (openai, stable-diffusion, aiml-api) | aiml-api | No |
-| `--size` | `-s` | Image size (see supported sizes below) | 256x256 | No |
+| `--size` | `-s` | Image size (see supported sizes below) | 512x512 | No |
 | `--output-path` | `-o` | Output file path | generated_image.png | No |
 | `--model` | `-m` | Model to use (see supported models below) | auto-selected | No |
 
@@ -174,8 +174,8 @@ java -jar target/generate-image-ai-1.0.0.jar \
 
 ### Stability AI (Stable Diffusion)
 - `256x256` - Small images, fastest generation, lowest token usage (~1-2 tokens)
-- `256x256` - Small images, fastest generation, lowest token usage (~1-2 tokens) (default)
-- `512x512` - Medium images, balanced quality/speed, moderate token usage (~4-6 tokens)
+- `256x256` - Small images, fastest generation, lowest token usage (~1-2 tokens)
+- `512x512` - Medium images, balanced quality/speed, moderate token usage (~4-6 tokens) (default)
 - `1024x1024` - Large images, highest quality, higher token usage (~8-12 tokens)
 - `1024x768` - Landscape format, moderate token usage (~6-8 tokens)
 - `768x1024` - Portrait format, moderate token usage (~6-8 tokens)
@@ -292,8 +292,8 @@ If you encounter issues:
 For users with limited tokens (like the 50,000 token limit), here are some tips:
 
 **Token Usage by Image Size:**
-- `256x256`: ~1-2 tokens per image (default, best for testing)
-- `512x512`: ~4-6 tokens per image (good balance)
+- `256x256`: ~1-2 tokens per image (best for testing)
+- `512x512`: ~4-6 tokens per image (default, good balance)
 - `1024x1024`: ~8-12 tokens per image (highest quality)
 
 **Maximizing Your 50,000 Tokens:**
@@ -302,7 +302,7 @@ For users with limited tokens (like the 50,000 token limit), here are some tips:
 - Use `1024x1024` for high-quality: ~4,000-6,000 images
 
 **Tips for Token Efficiency:**
-- Start with `256x256` for testing prompts (default)
+- Start with `512x512` for testing prompts (default)
 - Use `512x512` for production images
 - Reserve `1024x1024` for final, high-quality images
 - Keep prompts concise to reduce token usage
