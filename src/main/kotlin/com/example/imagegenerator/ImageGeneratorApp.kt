@@ -11,9 +11,9 @@ fun main(args: Array<String>) {
     
     val parser = ArgParser("image-generator")
     val prompt by parser.option(ArgType.String, shortName = "p", description = "Text prompt for image generation").required()
-    val apiKey by parser.option(ArgType.String, shortName = "k", description = "OpenAI API key").required()
+    val `api-key` by parser.option(ArgType.String, shortName = "k", description = "OpenAI API key").required()
     val size by parser.option(ArgType.String, shortName = "s", description = "Image size (256x256, 512x512, 1024x1024)").default("1024x1024")
-    val outputPath by parser.option(ArgType.String, shortName = "o", description = "Output file path").default("generated_image.png")
+    val `output-path` by parser.option(ArgType.String, shortName = "o", description = "Output file path").default("generated_image.png")
     val model by parser.option(ArgType.String, shortName = "m", description = "OpenAI model to use").default("dall-e-3")
     
     try {
@@ -22,11 +22,11 @@ fun main(args: Array<String>) {
         logger.info("Starting image generation with prompt: $prompt")
         logger.info("Using model: $model, size: $size")
         
-        val imageGenerator = ImageGenerator(apiKey)
-        val success = imageGenerator.generateImage(prompt, size, outputPath, model)
+        val imageGenerator = ImageGenerator(`api-key`)
+        val success = imageGenerator.generateImage(prompt, size, `output-path`, model)
         
         if (success) {
-            logger.info("Image generated successfully! Saved to: $outputPath")
+            logger.info("Image generated successfully! Saved to: $`output-path`")
         } else {
             logger.error("Failed to generate image")
             System.exit(1)
