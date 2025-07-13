@@ -1,6 +1,6 @@
 package com.example.imagegenerator
 
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertTrue
 
 class ImageGeneratorTest {
