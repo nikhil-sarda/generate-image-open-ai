@@ -45,7 +45,7 @@ A Kotlin-based Maven project that generates images using multiple AI providers (
 ### Basic Usage (Stable Diffusion - Default)
 
 ```bash
-java -jar target/generate-image-openai-1.0.0.jar \
+java -jar target/generate-image-ai-1.0.0.jar \
   --prompt "A beautiful sunset over mountains" \
   --api-key "your-stability-ai-api-key-here"
 ```
@@ -55,7 +55,7 @@ java -jar target/generate-image-openai-1.0.0.jar \
 ### OpenAI DALL-E Usage
 
 ```bash
-java -jar target/generate-image-openai-1.0.0.jar \
+java -jar target/generate-image-ai-1.0.0.jar \
   --prompt "A futuristic city with flying cars" \
   --api-key "your-openai-api-key-here" \
   --provider "openai" \
@@ -67,7 +67,7 @@ java -jar target/generate-image-openai-1.0.0.jar \
 ### Advanced Stable Diffusion Usage
 
 ```bash
-java -jar target/generate-image-openai-1.0.0.jar \
+java -jar target/generate-image-ai-1.0.0.jar \
   --prompt "A majestic dragon flying over a medieval castle" \
   --api-key "your-stability-ai-api-key-here" \
   --provider "stable-diffusion" \
@@ -91,14 +91,14 @@ java -jar target/generate-image-openai-1.0.0.jar \
 
 1. **Generate with Stable Diffusion (default):**
    ```bash
-   java -jar target/generate-image-openai-1.0.0.jar \
+   java -jar target/generate-image-ai-1.0.0.jar \
      -p "A cute cat playing with yarn" \
      -k "your-stability-ai-api-key"
    ```
 
 2. **Generate with OpenAI DALL-E:**
    ```bash
-   java -jar target/generate-image-openai-1.0.0.jar \
+   java -jar target/generate-image-ai-1.0.0.jar \
      -p "An abstract painting with vibrant colors" \
      -k "sk-your-openai-api-key" \
      -r "openai" \
@@ -107,7 +107,7 @@ java -jar target/generate-image-openai-1.0.0.jar \
 
 3. **Use specific Stable Diffusion model:**
    ```bash
-   java -jar target/generate-image-openai-1.0.0.jar \
+   java -jar target/generate-image-ai-1.0.0.jar \
      -p "A cyberpunk cityscape at night" \
      -k "your-stability-ai-api-key" \
      -r "stable-diffusion" \
@@ -196,7 +196,7 @@ The application uses SLF4J for logging. Log levels can be configured by setting 
 
 ```bash
 java -Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG \
-  -jar target/generate-image-openai-1.0.0.jar \
+  -jar target/generate-image-ai-1.0.0.jar \
   -p "Your prompt" \
   -k "your-api-key"
 ```

@@ -6,12 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>generate-image-openai</artifactId>
+    <artifactId>generate-image-ai</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Generate Image OpenAI</name>
-    <description>Kotlin application to generate images using OpenAI API</description>
+    <name>Generate Image AI</name>
+    <description>Kotlin application to generate images using multiple AI providers (OpenAI DALL-E and Stability AI Stable Diffusion)</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
