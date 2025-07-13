@@ -7,6 +7,7 @@ A Kotlin-based Maven project that generates images using multiple AI providers (
 - Generate images from text prompts using multiple AI providers
 - **OpenAI DALL-E**: High-quality image generation with DALL-E 2 and DALL-E 3
 - **Stability AI Stable Diffusion**: Advanced image generation with various Stable Diffusion models
+- **AIML API**: Multi-model image generation (requires configuration)
 - Support for different image sizes (256x256, 512x512, 1024x1024, 1024x768, 768x1024)
 - Command-line interface with flexible options
 - Automatic image download and saving
@@ -21,6 +22,7 @@ A Kotlin-based Maven project that generates images using multiple AI providers (
 - API key from your chosen provider:
   - **OpenAI API key** (for DALL-E models)
   - **Stability AI API key** (for Stable Diffusion models)
+  - **AIML API key** (for multi-model generation - requires configuration)
 
 ## Setup
 
@@ -82,7 +84,7 @@ java -jar target/generate-image-ai-1.0.0.jar \
 |--------|-------|-------------|---------|----------|
 | `--prompt` | `-p` | Text prompt for image generation | - | Yes |
 | `--api-key` | `-k` | API key for the selected provider | - | Yes |
-| `--provider` | `-r` | Image generation provider (openai, stable-diffusion) | stable-diffusion | No |
+| `--provider` | `-r` | Image generation provider (openai, stable-diffusion, aiml-api) | stable-diffusion | No |
 | `--size` | `-s` | Image size (see supported sizes below) | 256x256 | No |
 | `--output-path` | `-o` | Output file path | generated_image.png | No |
 | `--model` | `-m` | Model to use (see supported models below) | auto-selected | No |
@@ -115,6 +117,16 @@ java -jar target/generate-image-ai-1.0.0.jar \
      -s "1024x768"
    ```
 
+4. **Use AIML API (requires configuration):**
+   ```bash
+   java -jar target/generate-image-ai-1.0.0.jar \
+     -p "A futuristic robot in a neon-lit city" \
+     -k "your-aiml-api-key" \
+     -r "aiml-api" \
+     -m "dall-e-3" \
+     -s "512x512"
+   ```
+
 ## API Key Setup
 
 ### Stability AI (Stable Diffusion) - Recommended
@@ -127,6 +139,12 @@ java -jar target/generate-image-ai-1.0.0.jar \
 1. Go to [OpenAI API](https://platform.openai.com/api-keys)
 2. Create a new API key
 3. Use the key with the `--api-key` parameter and `--provider openai`
+
+### AIML API (Requires Configuration)
+1. Get an API key from [AIML API](https://aimlapi.com/app/keys)
+2. **Important**: The AIML API generator needs configuration before use
+3. Update the endpoints and request formats in `AimlApiGenerator.kt`
+4. Use the key with the `--api-key` parameter and `--provider aiml-api`
 
 **Note:** Keep your API keys secure and never commit them to version control.
 
@@ -143,6 +161,14 @@ java -jar target/generate-image-ai-1.0.0.jar \
 ### OpenAI Models
 - `dall-e-3` (default) - Latest model with highest quality
 - `dall-e-2` - Previous generation model
+
+### AIML API Models (Requires Configuration)
+- `dall-e-3` - OpenAI DALL-E 3 model
+- `dall-e-2` - OpenAI DALL-E 2 model
+- `stable-diffusion-xl` - Stable Diffusion XL model
+- `midjourney-v6` - Midjourney v6 model
+
+**Note:** AIML API models require proper configuration of endpoints and request formats.
 
 ## Supported Image Sizes
 

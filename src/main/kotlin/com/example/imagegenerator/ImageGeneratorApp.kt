@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
     val parser = ArgParser("image-generator")
     val prompt by parser.option(ArgType.String, shortName = "p", description = "Text prompt for image generation").required()
     val `api-key` by parser.option(ArgType.String, shortName = "k", description = "API key for the selected provider").required()
-    val provider by parser.option(ArgType.String, shortName = "r", description = "Image generation provider (openai or stable-diffusion)").default("stable-diffusion")
+    val provider by parser.option(ArgType.String, shortName = "r", description = "Image generation provider (openai, stable-diffusion, or aiml-api)").default("stable-diffusion")
     val size by parser.option(ArgType.String, shortName = "s", description = "Image size (256x256, 512x512, 1024x1024, 1024x768, 768x1024)").default("256x256")
     val `output-path` by parser.option(ArgType.String, shortName = "o", description = "Output file path").default("generated_image.png")
     val model by parser.option(ArgType.String, shortName = "m", description = "Model to use (see README for available models)").default("")
@@ -54,9 +54,24 @@ fun main(args: Array<String>) {
                 stableDiffusionGenerator.generateImage(prompt, size, `output-path`, sdModel)
             }
             
+            "aiml-api", "aiml" -> {
+                val aimlModel = if (model.isBlank()) "openai/gpt-image-1" else model
+                logger.info("Using AIML API model: $aimlModel")
+                
+                val aimlApiGenerator = AimlApiGenerator(`api-key`)
+                
+                // Validate API key first
+                if (!aimlApiGenerator.validateApiKey()) {
+                    logger.error("AIML API key validation failed. Please check your API key and try again.")
+                    System.exit(1)
+                }
+                
+                aimlApiGenerator.generateImage(prompt, size, `output-path`, aimlModel)
+            }
+            
             else -> {
                 logger.error("Unknown provider: $provider")
-                logger.error("Supported providers: openai, stable-diffusion")
+                logger.error("Supported providers: openai, stable-diffusion, aiml-api")
                 System.exit(1)
                 false
             }
