@@ -44,15 +44,15 @@ A Kotlin-based Maven project that generates images using multiple AI providers (
 
 ## Usage
 
-### Basic Usage (Stable Diffusion - Default)
+### Basic Usage (AIML API - Default)
 
 ```bash
 java -jar target/generate-image-ai-1.0.0.jar \
   --prompt "A beautiful sunset over mountains" \
-  --api-key "your-stability-ai-api-key-here"
+  --api-key "your-aiml-api-key-here"
 ```
 
-*Note: Default size is now 256x256 for maximum token efficiency*
+*Note: Default provider is now AIML API (`aiml-api`). Default size is 256x256 for maximum token efficiency*
 
 ### OpenAI DALL-E Usage
 
@@ -84,7 +84,7 @@ java -jar target/generate-image-ai-1.0.0.jar \
 |--------|-------|-------------|---------|----------|
 | `--prompt` | `-p` | Text prompt for image generation | - | Yes |
 | `--api-key` | `-k` | API key for the selected provider | - | Yes |
-| `--provider` | `-r` | Image generation provider (openai, stable-diffusion, aiml-api) | stable-diffusion | No |
+| `--provider` | `-r` | Image generation provider (openai, stable-diffusion, aiml-api) | aiml-api | No |
 | `--size` | `-s` | Image size (see supported sizes below) | 256x256 | No |
 | `--output-path` | `-o` | Output file path | generated_image.png | No |
 | `--model` | `-m` | Model to use (see supported models below) | auto-selected | No |
