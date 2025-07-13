@@ -49,7 +49,7 @@ A Kotlin-based Maven project that generates images using multiple AI providers (
 ```bash
 java -jar target/generate-image-ai-1.0.0.jar \
   --prompt "A beautiful sunset over mountains" \
-  --api-key "5a93dc96346c4abfa3e2ea67d84c1a55"
+  --api-key "aiml-api-key"
 ```
 
 *Note: Default provider is now AIML API (`aiml-api`). Default size is 512x512 for balanced quality and efficiency*
