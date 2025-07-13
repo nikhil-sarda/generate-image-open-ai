@@ -37,19 +37,49 @@ class StableDiffusionGenerator(private val apiKey: String) {
                 val responseBody = response.body?.string()
                 logger.info("✅ API key is valid")
                 if (responseBody != null) {
-                    val balance = mapper.readValue<BalanceResponse>(responseBody)
-                    logger.info("💰 Account balance: ${balance.credits} credits")
+                    try {
+                        val balance = mapper.readValue<BalanceResponse>(responseBody)
+                        logger.info("💰 Account balance: ${balance.credits} credits")
+                        if (balance.credits < 1) {
+                            logger.warn("⚠️  Low credit balance. Consider purchasing more credits.")
+                        }
+                    } catch (e: Exception) {
+                        logger.info("📋 Account info retrieved (balance format not recognized)")
+                    }
                 }
                 true
             } else {
                 logger.error("❌ API key validation failed with code: ${response.code}")
                 val responseBody = response.body?.string()
                 logger.error("Response: $responseBody")
+                
+                // Provide specific guidance based on error
+                when (response.code) {
+                    401 -> {
+                        logger.error("🔑 AUTHENTICATION ERROR:")
+                        logger.error("The API key is invalid or expired.")
+                        logger.error("Solutions:")
+                        logger.error("1. Get a fresh API key from: https://platform.stability.ai/account/keys")
+                        logger.error("2. Make sure you're copying the full key")
+                        logger.error("3. Check if your account is active")
+                        logger.error("4. Try logging out and back in to refresh your session")
+                    }
+                    403 -> {
+                        logger.error("🚫 ACCESS DENIED:")
+                        logger.error("Your account may be suspended or have restrictions.")
+                        logger.error("Check your account status at: https://platform.stability.ai/account")
+                    }
+                    else -> {
+                        logger.error("❓ UNKNOWN ERROR: HTTP ${response.code}")
+                        logger.error("Please check your internet connection and try again.")
+                    }
+                }
                 false
             }
             
         } catch (e: Exception) {
             logger.error("❌ Error validating API key: ${e.message}")
+            logger.error("Please check your internet connection and API key format.")
             false
         }
     }
